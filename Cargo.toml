@@ -1,0 +1,11 @@
+[package]
+name = "casmap"
+version = "0.1.0"
+edition = "2021"
+description = "A way to count constructs for cas12 6-plex CRISPR screens"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.65"
+fxread = "0.2.5"
