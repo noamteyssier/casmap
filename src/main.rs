@@ -10,5 +10,6 @@ use sgrna_table::VariableTable;
 fn main() -> Result<()> {
     let cli = Cli::parse();
     let table = VariableTable::from_file(&cli.sgrna_table)?;
+    println!("{:#?}", table);
     Ok(())
 }

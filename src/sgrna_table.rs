@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 
 
 #[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Hash, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct sgRNA {
     
     // DNA sequence of the variable region
@@ -14,6 +14,12 @@ pub struct sgRNA {
     // Construct identifier
     cid: usize,
 
+}
+
+impl Hash for sgRNA {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        state.write(self.sequence.as_bytes())
+    }
 }
 
 impl sgRNA {
