@@ -33,7 +33,7 @@ impl sgRNA {
 
 #[derive(Debug)]
 pub struct VariableTable {
-    records: HashSet<sgRNA>,
+    records: HashSet<String>,
     variable_length: usize,
 }
 impl VariableTable {
@@ -47,18 +47,17 @@ impl VariableTable {
         let records = reader
             .into_deserialize()
             .filter_map(|x| x.ok())
-            .fold(HashSet::new(), |mut set, x| {
-                set.insert(x);
+            .fold(HashSet::new(), |mut set, x: sgRNA | {
+                set.insert(x.sequence().to_owned());
                 set
             });
         let variable_length = Self::calculate_variable_length(&records)?;
         Ok(Self{records, variable_length})
     }
 
-    fn calculate_variable_length(seqset: &HashSet<sgRNA>) -> Result<usize> {
+    fn calculate_variable_length(seqset: &HashSet<String>) -> Result<usize> {
         let len_set = seqset
             .iter()
-            .map(|x| x.sequence())
             .map(|x| x.len())
             .fold(HashSet::new(), |mut set, x| {
                 set.insert(x);
@@ -71,5 +70,8 @@ impl VariableTable {
         } else {
             bail!("Multiple sequence lengths found in sgRNA table")
         }
+    }
+    pub fn contains(&self, seq: &str) -> bool {
+        self.records.contains(seq)
     }
 }
