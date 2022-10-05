@@ -74,4 +74,7 @@ impl VariableTable {
     pub fn contains(&self, seq: &str) -> bool {
         self.records.contains(seq)
     }
+    pub fn variable_length(&self) -> usize {
+        self.variable_length
+    }
 }
