@@ -1,7 +1,9 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{collections::{HashSet, HashMap}, hash::Hash};
 
 use anyhow::{Result, bail};
 use serde::{Serialize, Deserialize};
+
+use crate::utils::reverse_complement;
 
 
 #[allow(non_camel_case_types)]
@@ -26,14 +28,11 @@ impl sgRNA {
     pub fn sequence(&self) -> &str {
         &self.sequence
     }
-    pub fn cid(&self) -> usize {
-        self.cid
-    }
 }
 
 #[derive(Debug)]
 pub struct VariableTable {
-    records: HashSet<String>,
+    records: HashMap<String, String>,
     variable_length: usize,
 }
 impl VariableTable {
@@ -47,17 +46,20 @@ impl VariableTable {
         let records = reader
             .into_deserialize()
             .filter_map(|x| x.ok())
-            .fold(HashSet::new(), |mut set, x: sgRNA | {
-                set.insert(x.sequence().to_owned());
-                set
+            .fold(HashMap::new(), |mut map, x: sgRNA | {
+                let seq = x.sequence().to_owned();
+                let revcomp = reverse_complement(&seq);
+                map.insert(seq.to_owned(), seq.to_owned());
+                map.insert(revcomp, seq);
+                map 
             });
         let variable_length = Self::calculate_variable_length(&records)?;
         Ok(Self{records, variable_length})
     }
 
-    fn calculate_variable_length(seqset: &HashSet<String>) -> Result<usize> {
-        let len_set = seqset
-            .iter()
+    fn calculate_variable_length(seqmap: &HashMap<String, String>) -> Result<usize> {
+        let len_set = seqmap
+            .keys()
             .map(|x| x.len())
             .fold(HashSet::new(), |mut set, x| {
                 set.insert(x);
@@ -71,8 +73,8 @@ impl VariableTable {
             bail!("Multiple sequence lengths found in sgRNA table")
         }
     }
-    pub fn contains(&self, seq: &str) -> bool {
-        self.records.contains(seq)
+    pub fn contains(&self, seq: &str) -> Option<&String> {
+        self.records.get(seq)
     }
     pub fn variable_length(&self) -> usize {
         self.variable_length

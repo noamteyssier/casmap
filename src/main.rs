@@ -5,6 +5,7 @@ use clap::Parser;
 
 mod cli;
 mod sgrna_table;
+mod utils;
 use cli::Cli;
 use sgrna_table::VariableTable;
 
@@ -71,7 +72,8 @@ where
     }
     fn kmer_search(&self, table: &'c VariableTable, sequence: &'c str) -> Vec<&'c str> {
         KmerIter::new(sequence, table.variable_length())
-            .filter(|x| table.contains(x))
+            .filter_map(|x| table.contains(x))
+            .map(|x| x.as_str())
             .collect()
     }
 }
@@ -84,11 +86,10 @@ fn main() -> Result<()> {
     
     for (r1_bytes, r2_bytes) in r1_reader.zip(r2_reader) {
         let r1 = std::str::from_utf8(r1_bytes.seq())?;
-        let r2 = r2_bytes.seq_rev_comp();
-        let r2 = std::str::from_utf8(&r2)?;
+        let r2 = std::str::from_utf8(r2_bytes.seq())?;
         let mut results = SequenceResults::new(r1, r2);
         results.match_into(&table);
-        println!("{:#?}", results.variables);
+        // println!("{:#?}", results.variables);
     }
     Ok(())
 }
