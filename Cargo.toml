@@ -8,4 +8,8 @@ description = "A way to count constructs for cas12 6-plex CRISPR screens"
 
 [dependencies]
 anyhow = "1.0.65"
+clap = { version = "4.0.10", features = ["derive"] }
+csv = "1.1.6"
 fxread = "0.2.5"
+regex = "1.6.0"
+serde = { version = "1.0.145", features = ["derive"] }
