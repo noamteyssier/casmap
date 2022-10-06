@@ -3,21 +3,19 @@ use clap::Parser;
 
 mod cli;
 mod kmer;
-mod sgrna_table;
 mod sequence;
+mod sgrna_table;
 mod utils;
 use cli::Cli;
-use sgrna_table::VariableTable;
 use sequence::SequenceResults;
-
-
+use sgrna_table::VariableTable;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
     let table = VariableTable::from_file(&cli.sgrna_table)?;
     let r1_reader = fxread::initialize_reader(&cli.r1)?;
     let r2_reader = fxread::initialize_reader(&cli.r2)?;
-    
+
     for (r1_bytes, r2_bytes) in r1_reader.zip(r2_reader) {
         let r1 = std::str::from_utf8(r1_bytes.seq())?;
         let r2 = std::str::from_utf8(r2_bytes.seq())?;

@@ -1,21 +1,21 @@
-use std::{collections::{HashSet, HashMap}, hash::Hash};
+use std::{
+    collections::{HashMap, HashSet},
+    hash::Hash,
+};
 
-use anyhow::{Result, bail};
-use serde::{Serialize, Deserialize};
+use anyhow::{bail, Result};
+use serde::{Deserialize, Serialize};
 
 use crate::utils::reverse_complement;
-
 
 #[allow(non_camel_case_types)]
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct sgRNA {
-    
     // DNA sequence of the variable region
     sequence: String,
 
     // Construct identifier
     cid: usize,
-
 }
 
 impl Hash for sgRNA {
@@ -43,18 +43,21 @@ impl VariableTable {
             .flexible(false)
             .from_path(filepath)?;
 
-        let records = reader
-            .into_deserialize()
-            .filter_map(|x| x.ok())
-            .fold(HashMap::new(), |mut map, x: sgRNA | {
+        let records = reader.into_deserialize().filter_map(|x| x.ok()).fold(
+            HashMap::new(),
+            |mut map, x: sgRNA| {
                 let seq = x.sequence().to_owned();
                 let revcomp = reverse_complement(&seq);
                 map.insert(seq.to_owned(), seq.to_owned());
                 map.insert(revcomp, seq);
-                map 
-            });
+                map
+            },
+        );
         let variable_length = Self::calculate_variable_length(&records)?;
-        Ok(Self{records, variable_length})
+        Ok(Self {
+            records,
+            variable_length,
+        })
     }
 
     fn calculate_variable_length(seqmap: &HashMap<String, String>) -> Result<usize> {
@@ -63,7 +66,7 @@ impl VariableTable {
             .map(|x| x.len())
             .fold(HashSet::new(), |mut set, x| {
                 set.insert(x);
-                set 
+                set
             });
         if len_set.len() == 1 {
             Ok(*len_set.iter().next().unwrap())

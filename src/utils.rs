@@ -7,7 +7,7 @@ pub fn reverse_complement(sequence: &str) -> String {
             'C' => 'G',
             'G' => 'C',
             'T' => 'A',
-            _ => panic!("Unexpected base pair found")
+            _ => panic!("Unexpected base pair found"),
         })
         .collect()
 }

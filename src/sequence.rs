@@ -1,6 +1,5 @@
-use std::collections::HashMap;
 use crate::{kmer::KmerIter, sgrna_table::VariableTable};
-
+use std::collections::HashMap;
 
 pub struct SequenceResults<'a, 'b, 'c> {
     r1: &'a str,
@@ -22,17 +21,12 @@ where
     pub fn match_into(&mut self, table: &'c VariableTable) {
         let r1_variables = self.kmer_search(table, self.r1);
         let r2_variables = self.kmer_search(table, self.r2);
-        r1_variables
-            .iter()
-            .for_each(|x| {
-                *self.variables.entry(x).or_default() += 1;
-            });
-        r2_variables
-            .iter()
-            .for_each(|x| {
-                *self.variables.entry(x).or_default() += 1;
-            });
-
+        r1_variables.iter().for_each(|x| {
+            *self.variables.entry(x).or_default() += 1;
+        });
+        r2_variables.iter().for_each(|x| {
+            *self.variables.entry(x).or_default() += 1;
+        });
     }
     fn kmer_search(&self, table: &'c VariableTable, sequence: &'c str) -> Vec<&'c str> {
         KmerIter::new(sequence, table.variable_length())
@@ -44,4 +38,3 @@ where
         &self.variables
     }
 }
-
