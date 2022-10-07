@@ -4,14 +4,15 @@ use clap::Parser;
 mod cli;
 mod kmer;
 mod sequence;
-mod sgrna_table;
+mod spacer_table;
+mod spacer;
 mod utils;
 use cli::{Cli, Commands};
 use sequence::SequenceResults;
-use sgrna_table::VariableTable;
+use spacer_table::SpacerTable;
 
 fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
-    let table = VariableTable::from_file(sgrna_table)?;
+    let table = SpacerTable::from_file(sgrna_table)?;
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
 
@@ -20,14 +21,14 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
         let r2 = std::str::from_utf8(r2_bytes.seq())?;
         let mut results = SequenceResults::new(r1, r2);
         results.match_into(&table);
-        println!("{:#?}", results.variables());
+        println!("{:#?}", results.spacers());
     }
 
     Ok(())
 }
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
-    let table = VariableTable::from_file(sgrna_table)?;
+    let table = SpacerTable::from_file(sgrna_table)?;
     println!("{:#?}", table);
     Ok(())
 }

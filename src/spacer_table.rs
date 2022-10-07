@@ -1,44 +1,13 @@
-use std::{
-    collections::{HashMap, HashSet},
-    hash::Hash,
-};
-
+use std::collections::{HashMap, HashSet};
 use anyhow::{bail, Result};
-use serde::{Deserialize, Serialize};
-
-use crate::utils::reverse_complement;
-
-#[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
-pub struct sgRNA {
-    // DNA sequence of the variable region
-    sequence: String,
-
-    // Construct identifier
-    cid: usize,
-
-    // Location identifer
-    vid: usize,
-}
-
-impl Hash for sgRNA {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        state.write(self.sequence.as_bytes())
-    }
-}
-
-impl sgRNA {
-    pub fn sequence(&self) -> &str {
-        &self.sequence
-    }
-}
+use crate::{utils::reverse_complement, spacer::Spacer};
 
 #[derive(Debug)]
-pub struct VariableTable {
+pub struct SpacerTable {
     records: HashMap<String, String>,
-    variable_length: usize,
+    spacer_length: usize,
 }
-impl VariableTable {
+impl SpacerTable {
     pub fn from_file(filepath: &str) -> Result<Self> {
         let reader = csv::ReaderBuilder::new()
             .has_headers(false)
@@ -48,7 +17,7 @@ impl VariableTable {
 
         let records = reader.into_deserialize().filter_map(|x| x.ok()).fold(
             HashMap::new(),
-            |mut map, x: sgRNA| {
+            |mut map, x: Spacer| {
                 let seq = x.sequence().to_owned();
                 let revcomp = reverse_complement(&seq);
                 map.insert(seq.to_owned(), seq.to_owned());
@@ -56,14 +25,14 @@ impl VariableTable {
                 map
             },
         );
-        let variable_length = Self::calculate_variable_length(&records)?;
+        let spacer_length = Self::calculate_spacer_length(&records)?;
         Ok(Self {
             records,
-            variable_length,
+            spacer_length,
         })
     }
 
-    fn calculate_variable_length(seqmap: &HashMap<String, String>) -> Result<usize> {
+    fn calculate_spacer_length(seqmap: &HashMap<String, String>) -> Result<usize> {
         let len_set = seqmap
             .keys()
             .map(|x| x.len())
@@ -82,7 +51,7 @@ impl VariableTable {
     pub fn contains(&self, seq: &str) -> Option<&String> {
         self.records.get(seq)
     }
-    pub fn variable_length(&self) -> usize {
-        self.variable_length
+    pub fn spacer_length(&self) -> usize {
+        self.spacer_length
     }
 }
