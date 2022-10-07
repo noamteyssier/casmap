@@ -24,6 +24,9 @@ impl Spacer {
     pub fn sequence(&self) -> &str {
         &self.sequence
     }
+    pub fn cid(&self) -> usize {
+        self.cid
+    }
     pub fn ordering(&self, other: &Self) -> Ordering {
         match self.cid.cmp(&other.cid) {
             Ordering::Equal => {
