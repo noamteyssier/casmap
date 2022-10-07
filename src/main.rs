@@ -5,6 +5,7 @@ mod cli;
 mod constant;
 mod construct;
 mod construct_table;
+mod construct_results;
 mod kmer;
 mod sequence;
 mod spacer_table;
@@ -14,6 +15,8 @@ use cli::{Cli, Commands};
 use construct_table::ConstructTable;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
+
+use crate::construct_results::ConstructResults;
 
 fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
     let table = SpacerTable::from_file(sgrna_table)?;
@@ -33,7 +36,16 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
     let table = ConstructTable::new(sgrna_table, dr_table)?;
-    println!("{:#?}", table);
+    let r1_reader = fxread::initialize_reader(r1)?;
+    let r2_reader = fxread::initialize_reader(r2)?;
+
+    for (r1_bytes, r2_bytes) in r1_reader.zip(r2_reader) {
+        let r1 = std::str::from_utf8(r1_bytes.seq())?;
+        let r2 = std::str::from_utf8(r2_bytes.seq())?;
+        let mut results = ConstructResults::new(r1, r2);
+        results.match_into(&table);
+        println!("{:#?}", results);
+    }
     Ok(())
 }
 
