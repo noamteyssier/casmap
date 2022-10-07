@@ -1,17 +1,29 @@
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about)]
 pub struct Cli {
-    /// Read 1
-    #[clap(short = 'i', long)]
-    pub r1: String,
 
-    /// Read 2
-    #[clap(short = 'I', long)]
-    pub r2: String,
+    #[clap(subcommand)]
+    pub command: Commands,
 
-    /// sgRNA table
-    #[clap(short = 's', long)]
-    pub sgrna_table: String,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    
+    Spacers {
+        /// Read 1
+        #[clap(short = 'i', long)]
+        r1: String,
+
+        /// Read 2
+        #[clap(short = 'I', long)]
+        r2: String,
+
+        /// sgRNA table
+        #[clap(short = 's', long)]
+        sgrna_table: String,
+    },
+
 }
