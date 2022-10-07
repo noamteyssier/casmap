@@ -32,7 +32,8 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
 }
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
-    ConstructTable::new(sgrna_table, dr_table)?;
+    let table = ConstructTable::new(sgrna_table, dr_table)?;
+    println!("{:#?}", table);
     Ok(())
 }
 

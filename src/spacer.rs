@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{hash::Hash, cmp::Ordering};
 
 #[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 pub struct Spacer {
     // DNA sequence of the variable region
     sequence: String,

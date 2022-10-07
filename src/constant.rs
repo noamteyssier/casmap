@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct Constant {
     sequence: String,
     id: usize,
