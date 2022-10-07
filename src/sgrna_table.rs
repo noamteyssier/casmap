@@ -16,6 +16,9 @@ pub struct sgRNA {
 
     // Construct identifier
     cid: usize,
+
+    // Location identifer
+    vid: usize,
 }
 
 impl Hash for sgRNA {
