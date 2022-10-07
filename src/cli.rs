@@ -25,5 +25,23 @@ pub enum Commands {
         #[clap(short = 's', long)]
         sgrna_table: String,
     },
+    
+    Constructs {
+        /// Read 1
+        #[clap(short = 'i', long)]
+        r1: String,
+
+        /// Read 2
+        #[clap(short = 'I', long)]
+        r2: String,
+
+        /// sgRNA table
+        #[clap(short = 's', long)]
+        sgrna_table: String,
+
+        /// Constant Repeats (DR)
+        #[clap(short = 'd', long)]
+        dr_table: String,
+    },
 
 }

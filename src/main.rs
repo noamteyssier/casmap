@@ -26,11 +26,20 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
     Ok(())
 }
 
+fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
+    let table = VariableTable::from_file(sgrna_table)?;
+    println!("{:#?}", table);
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
         Commands::Spacers { r1, r2, sgrna_table } => {
             collect_spacers(&r1, &r2, &sgrna_table)?;
+        },
+        Commands::Constructs { r1, r2, sgrna_table, dr_table } => {
+            collect_constructs(&r1, &r2, &sgrna_table, &dr_table)?;
         }
     }
     Ok(())
