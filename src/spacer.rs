@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{hash::Hash, cmp::Ordering};
+use std::{cmp::Ordering, hash::Hash};
 
 #[allow(non_camel_case_types)]
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
@@ -29,20 +29,16 @@ impl Spacer {
     }
     pub fn ordering(&self, other: &Self) -> Ordering {
         match self.cid.cmp(&other.cid) {
-            Ordering::Equal => {
-                self.vid.cmp(&other.vid)
-            },
-            order => {
-                order
-            }
+            Ordering::Equal => self.vid.cmp(&other.vid),
+            order => order,
         }
     }
 }
 
 #[cfg(test)]
 mod testing {
-    use std::cmp::Ordering;
     use super::Spacer;
+    use std::cmp::Ordering;
 
     #[test]
     fn ordering_a() {

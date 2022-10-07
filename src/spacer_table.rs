@@ -1,6 +1,6 @@
-use std::collections::{HashMap, HashSet};
+use crate::{spacer::Spacer, utils::reverse_complement};
 use anyhow::{bail, Result};
-use crate::{utils::reverse_complement, spacer::Spacer};
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 pub struct SpacerTable {

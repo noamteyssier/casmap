@@ -5,12 +5,12 @@ mod cli;
 mod constant;
 mod construct;
 mod construct_counts;
-mod construct_table;
 mod construct_results;
+mod construct_table;
 mod kmer;
 mod sequence;
-mod spacer_table;
 mod spacer;
+mod spacer_table;
 mod utils;
 use cli::{Cli, Commands};
 use construct_counts::ConstructCounts;
@@ -57,10 +57,19 @@ fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> 
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
-        Commands::Spacers { r1, r2, sgrna_table } => {
+        Commands::Spacers {
+            r1,
+            r2,
+            sgrna_table,
+        } => {
             collect_spacers(&r1, &r2, &sgrna_table)?;
-        },
-        Commands::Constructs { r1, r2, sgrna_table, dr_table } => {
+        }
+        Commands::Constructs {
+            r1,
+            r2,
+            sgrna_table,
+            dr_table,
+        } => {
             collect_constructs(&r1, &r2, &sgrna_table, &dr_table)?;
         }
     }

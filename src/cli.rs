@@ -3,15 +3,12 @@ use clap::{Parser, Subcommand};
 #[derive(Parser, Debug)]
 #[clap(author, version, about)]
 pub struct Cli {
-
     #[clap(subcommand)]
     pub command: Commands,
-
 }
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    
     Spacers {
         /// Read 1
         #[clap(short = 'i', long)]
@@ -25,7 +22,7 @@ pub enum Commands {
         #[clap(short = 's', long)]
         sgrna_table: String,
     },
-    
+
     Constructs {
         /// Read 1
         #[clap(short = 'i', long)]
@@ -43,5 +40,4 @@ pub enum Commands {
         #[clap(short = 'd', long)]
         dr_table: String,
     },
-
 }

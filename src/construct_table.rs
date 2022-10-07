@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use anyhow::{Result, bail};
-use crate::{spacer::Spacer, constant::Constant, construct::Construct};
+use crate::{constant::Constant, construct::Construct, spacer::Spacer};
+use anyhow::{bail, Result};
 
 #[derive(Debug)]
 #[allow(unused)]
@@ -20,7 +20,14 @@ impl ConstructTable {
         let constructs = Self::build_constructs(&spacers, &constants)?;
         let (r1_table, r2_table) = Self::build_hashtables(&constructs);
         let k = Self::half_construct_size(&r1_table, &r2_table)?;
-        Ok(Self {spacers, constants, constructs, r1_table, r2_table, k})
+        Ok(Self {
+            spacers,
+            constants,
+            constructs,
+            r1_table,
+            r2_table,
+            k,
+        })
     }
     fn parse_spacers(sgrna_table: &str) -> Result<Vec<Spacer>> {
         let reader = csv::ReaderBuilder::new()
@@ -58,17 +65,22 @@ impl ConstructTable {
         }
         Ok(constructs)
     }
-    fn build_hashtables(constructs: &[Construct]) -> (HashMap<String, usize>, HashMap<String, usize>) {
-        constructs
-            .iter()
-            .fold(
-                (HashMap::new(), HashMap::new()), |(mut r1_map, mut r2_map), c| {
-                    r1_map.insert(c.r1(), c.cid());
-                    r2_map.insert(c.r2(), c.cid());
-                    (r1_map, r2_map)
-                })
+    fn build_hashtables(
+        constructs: &[Construct],
+    ) -> (HashMap<String, usize>, HashMap<String, usize>) {
+        constructs.iter().fold(
+            (HashMap::new(), HashMap::new()),
+            |(mut r1_map, mut r2_map), c| {
+                r1_map.insert(c.r1(), c.cid());
+                r2_map.insert(c.r2(), c.cid());
+                (r1_map, r2_map)
+            },
+        )
     }
-    fn half_construct_size(r1_map: &HashMap<String, usize>, r2_map: &HashMap<String, usize>) -> Result<usize> {
+    fn half_construct_size(
+        r1_map: &HashMap<String, usize>,
+        r2_map: &HashMap<String, usize>,
+    ) -> Result<usize> {
         let r1_size_vec = r1_map.keys().map(|x| x.len()).collect::<HashSet<usize>>();
         let r2_size_vec = r2_map.keys().map(|x| x.len()).collect::<HashSet<usize>>();
 
