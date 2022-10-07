@@ -89,4 +89,7 @@ impl ConstructTable {
     pub fn r2_contains(&self, seq: &str) -> Option<&usize> {
         self.r2_table.get(seq)
     }
+    pub fn len(&self) -> usize {
+        self.constructs.len()
+    }
 }

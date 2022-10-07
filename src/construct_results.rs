@@ -10,6 +10,9 @@ impl<'a> ConstructResults<'a> {
     pub fn new(r1: &'a str, r2: &'a str) -> Self {
         Self { r1, r2, cid: None }
     }
+    pub fn cid(&self) -> Option<usize> {
+        self.cid
+    }
     pub fn match_into(&mut self, table: &ConstructTable) {
         self.cid = match self.kmer_search_r1(table, self.r1) {
             Some(cid_r1) => {
