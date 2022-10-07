@@ -2,12 +2,16 @@ use anyhow::Result;
 use clap::Parser;
 
 mod cli;
+mod constant;
+mod construct;
+mod construct_table;
 mod kmer;
 mod sequence;
 mod spacer_table;
 mod spacer;
 mod utils;
 use cli::{Cli, Commands};
+use construct_table::ConstructTable;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
 
@@ -28,8 +32,7 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
 }
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
-    let table = SpacerTable::from_file(sgrna_table)?;
-    println!("{:#?}", table);
+    ConstructTable::new(sgrna_table, dr_table)?;
     Ok(())
 }
 
