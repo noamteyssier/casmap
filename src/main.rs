@@ -17,12 +17,26 @@ use construct_counts::ConstructCounts;
 use construct_table::ConstructTable;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
-use spinners::Spinner;
+use spinoff::{Spinner, Color, Spinners, Streams};
 
 use crate::construct_results::ConstructResults;
 
-fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
+fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str, _output: &str) -> Result<()> {
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Building Spacer Hashmap",
+        Color::Green,
+        Streams::Stderr,
+    );
     let table = SpacerTable::from_file(sgrna_table)?;
+    sp.stop_and_persist("✔️", "Finished Spacer Table");
+
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Matching Reads",
+        Color::Green,
+        Streams::Stderr,
+    );
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
 
@@ -33,20 +47,28 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
         results.match_into(&table);
         println!("{:#?}", results.spacers());
     }
+    sp.stop_and_persist("✔️", "Finished Mapping Reads");
 
     Ok(())
 }
 
-fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
-    let mut sp = Spinner::new(
-        spinners::Spinners::Dots12,
-        "Building Construct Hashmap".into(),
+fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str, output: &str) -> Result<()> {
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Building Construct Hashmap",
+        Color::Green,
+        Streams::Stderr,
     );
     let table = ConstructTable::new(sgrna_table, dr_table)?;
     let mut counts = ConstructCounts::new(table.len());
-    sp.stop_with_newline();
+    sp.stop_and_persist("✔️", "Finished Construct Table");
 
-    let mut sp = Spinner::new(spinners::Spinners::Dots12, "Assigning reads".into());
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Matching Reads",
+        Color::Green,
+        Streams::Stderr,
+    );
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
 
@@ -57,9 +79,9 @@ fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> 
         results.match_into(&table);
         counts.count(&results);
     }
-    sp.stop_with_newline();
-    counts.pprint();
-
+    sp.stop_and_persist("✔️", "Finished Mapping Reads");
+    counts.pprint(output)?;
+    counts.statistics();
     Ok(())
 }
 
@@ -70,16 +92,18 @@ fn main() -> Result<()> {
             r1,
             r2,
             sgrna_table,
+            output,
         } => {
-            collect_spacers(&r1, &r2, &sgrna_table)?;
+            collect_spacers(&r1, &r2, &sgrna_table, &output)?;
         }
         Commands::Constructs {
             r1,
             r2,
             sgrna_table,
             dr_table,
+            output,
         } => {
-            collect_constructs(&r1, &r2, &sgrna_table, &dr_table)?;
+            collect_constructs(&r1, &r2, &sgrna_table, &dr_table, &output)?;
         }
     }
     Ok(())

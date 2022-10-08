@@ -9,6 +9,8 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+
+    /// Reports the spacers and counts for each read
     Spacers {
         /// Read 1
         #[clap(short = 'i', long)]
@@ -21,8 +23,12 @@ pub enum Commands {
         /// sgRNA table
         #[clap(short = 's', long)]
         sgrna_table: String,
+
+        #[clap(short, long, default_value="spacer_counts.tsv")]
+        output: String,
     },
 
+    /// Counts the number of perfect constructs
     Constructs {
         /// Read 1
         #[clap(short = 'i', long)]
@@ -39,5 +45,8 @@ pub enum Commands {
         /// Constant Repeats (DR)
         #[clap(short = 'd', long)]
         dr_table: String,
+
+        #[clap(short, long, default_value="construct_counts.tsv")]
+        output: String,
     },
 }

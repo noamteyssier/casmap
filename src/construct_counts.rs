@@ -1,10 +1,14 @@
+use std::{io::Write, fs::File};
+use anyhow::Result;
 use hashbrown::HashMap;
-
 use crate::construct_results::ConstructResults;
 
 #[derive(Debug)]
 pub struct ConstructCounts {
     map: HashMap<usize, usize>,
+    n_mapped: usize,
+    n_unmapped: usize,
+    total: usize,
 }
 impl ConstructCounts {
     pub fn new(n_constructs: usize) -> Self {
@@ -12,20 +16,31 @@ impl ConstructCounts {
             map.insert(x, 0);
             map
         });
-        Self { map }
+        Self { map, n_mapped: 0, n_unmapped: 0, total: 0 }
     }
     pub fn count(&mut self, results: &ConstructResults) {
+        self.total += 1;
         match results.cid() {
             Some(cid) => {
+                self.n_mapped += 1;
                 *self.map.get_mut(&cid).unwrap() += 1;
             }
-            None => {}
+            None => {
+                self.n_unmapped += 1;
+            }
         }
     }
-    pub fn pprint(&self) {
-        println!("{}\t{}", "ConstructID", "Counts");
-        self.map.iter().for_each(|(k, v)| {
-            println!("{}\t{}", k, v);
-        });
+    pub fn pprint(&self, output: &str) -> Result<()> {
+        let mut f = File::create(output)?;
+        writeln!(f, "{}\t{}", "ConstructID", "Counts")?;
+        for (k, v) in self.map.iter() {
+            writeln!(f, "{}\t{}", k, v)?;
+        }
+        Ok(())
+    }
+    pub fn statistics(&self) {
+        eprintln!("Mapped Reads    : {}", self.n_mapped);
+        eprintln!("Total Reads     : {}", self.total);
+        eprintln!("Fraction Mapped : {:.4}", self.n_mapped as f64 / self.total as f64);
     }
 }
