@@ -38,7 +38,10 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
 }
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
-    let mut sp = Spinner::new(spinners::Spinners::Dots12, "Building Construct Hashmap".into());
+    let mut sp = Spinner::new(
+        spinners::Spinners::Dots12,
+        "Building Construct Hashmap".into(),
+    );
     let table = ConstructTable::new(sgrna_table, dr_table)?;
     let mut counts = ConstructCounts::new(table.len());
     sp.stop_with_newline();

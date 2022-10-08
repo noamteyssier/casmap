@@ -1,6 +1,6 @@
-use hashbrown::{HashMap, HashSet, hash_map::Keys};
 use crate::{constant::Constant, construct::Construct, spacer::Spacer};
 use anyhow::{bail, Result};
+use hashbrown::{hash_map::Keys, HashMap, HashSet};
 
 #[derive(Debug)]
 #[allow(unused)]
@@ -57,7 +57,7 @@ impl ConstructTable {
         records.sort_unstable_by(|a, b| a.ordering(&b));
         match records.len() {
             0 => bail!("No constant regions found!"),
-            _ => Ok(records)
+            _ => Ok(records),
         }
     }
     fn build_constructs(spacers: &[Spacer], constants: &[Constant]) -> Result<Vec<Construct>> {
@@ -69,17 +69,18 @@ impl ConstructTable {
     }
     fn build_hashtables(
         constructs: &[Construct],
-    ) -> (HashMap<String, HashSet<usize>>, HashMap<String, HashSet<usize>>) {
-        constructs
-            .iter()
-            .fold(
-                (HashMap::new(), HashMap::new()),
-                |(mut r1_map, mut r2_map), c| {
-                    r1_map.entry(c.r1()).or_default().insert(c.cid());
-                    r2_map.entry(c.r2()).or_default().insert(c.cid());
-                    (r1_map, r2_map)
-                },
-            )
+    ) -> (
+        HashMap<String, HashSet<usize>>,
+        HashMap<String, HashSet<usize>>,
+    ) {
+        constructs.iter().fold(
+            (HashMap::new(), HashMap::new()),
+            |(mut r1_map, mut r2_map), c| {
+                r1_map.entry(c.r1()).or_default().insert(c.cid());
+                r2_map.entry(c.r2()).or_default().insert(c.cid());
+                (r1_map, r2_map)
+            },
+        )
     }
     fn half_construct_size<'a>(
         r1_keys: Keys<String, HashSet<usize>>,
