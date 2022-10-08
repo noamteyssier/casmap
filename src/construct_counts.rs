@@ -22,4 +22,12 @@ impl ConstructCounts {
             None => {}
         }
     }
+    pub fn pprint(&self) {
+        println!("{}\t{}", "ConstructID", "Counts");
+        self.map
+            .iter()
+            .for_each(|(k, v)| {
+                println!("{}\t{}", k, v);
+            });
+    }
 }

@@ -1,5 +1,4 @@
-use std::collections::{HashMap, HashSet};
-
+use std::collections::{HashMap, HashSet, hash_map::Keys};
 use crate::{constant::Constant, construct::Construct, spacer::Spacer};
 use anyhow::{bail, Result};
 
@@ -9,8 +8,8 @@ pub struct ConstructTable {
     spacers: Vec<Spacer>,
     constants: Vec<Constant>,
     constructs: Vec<Construct>,
-    r1_table: HashMap<String, usize>,
-    r2_table: HashMap<String, usize>,
+    r1_table: HashMap<String, HashSet<usize>>,
+    r2_table: HashMap<String, HashSet<usize>>,
     k: usize,
 }
 impl ConstructTable {
@@ -19,7 +18,7 @@ impl ConstructTable {
         let constants = Self::parse_constants(dr_table)?;
         let constructs = Self::build_constructs(&spacers, &constants)?;
         let (r1_table, r2_table) = Self::build_hashtables(&constructs);
-        let k = Self::half_construct_size(&r1_table, &r2_table)?;
+        let k = Self::half_construct_size(r1_table.keys(), r2_table.keys())?;
         Ok(Self {
             spacers,
             constants,
@@ -56,7 +55,10 @@ impl ConstructTable {
             .filter_map(|x| x.ok())
             .collect::<Vec<Constant>>();
         records.sort_unstable_by(|a, b| a.ordering(&b));
-        Ok(records)
+        match records.len() {
+            0 => bail!("No constant regions found!"),
+            _ => Ok(records)
+        }
     }
     fn build_constructs(spacers: &[Spacer], constants: &[Constant]) -> Result<Vec<Construct>> {
         let mut constructs = Vec::new();
@@ -67,22 +69,24 @@ impl ConstructTable {
     }
     fn build_hashtables(
         constructs: &[Construct],
-    ) -> (HashMap<String, usize>, HashMap<String, usize>) {
-        constructs.iter().fold(
-            (HashMap::new(), HashMap::new()),
-            |(mut r1_map, mut r2_map), c| {
-                r1_map.insert(c.r1(), c.cid());
-                r2_map.insert(c.r2(), c.cid());
-                (r1_map, r2_map)
-            },
-        )
+    ) -> (HashMap<String, HashSet<usize>>, HashMap<String, HashSet<usize>>) {
+        constructs
+            .iter()
+            .fold(
+                (HashMap::new(), HashMap::new()),
+                |(mut r1_map, mut r2_map), c| {
+                    r1_map.entry(c.r1()).or_default().insert(c.cid());
+                    r2_map.entry(c.r2()).or_default().insert(c.cid());
+                    (r1_map, r2_map)
+                },
+            )
     }
-    fn half_construct_size(
-        r1_map: &HashMap<String, usize>,
-        r2_map: &HashMap<String, usize>,
+    fn half_construct_size<'a>(
+        r1_keys: Keys<String, HashSet<usize>>,
+        r2_keys: Keys<String, HashSet<usize>>,
     ) -> Result<usize> {
-        let r1_size_vec = r1_map.keys().map(|x| x.len()).collect::<HashSet<usize>>();
-        let r2_size_vec = r2_map.keys().map(|x| x.len()).collect::<HashSet<usize>>();
+        let r1_size_vec = r1_keys.map(|x| x.len()).collect::<HashSet<usize>>();
+        let r2_size_vec = r2_keys.map(|x| x.len()).collect::<HashSet<usize>>();
 
         if r1_size_vec.len() != r2_size_vec.len() {
             bail!("Unequal sized R1 and R2 found")
@@ -95,10 +99,10 @@ impl ConstructTable {
     pub fn k(&self) -> usize {
         self.k
     }
-    pub fn r1_contains(&self, seq: &str) -> Option<&usize> {
+    pub fn r1_contains(&self, seq: &str) -> Option<&HashSet<usize>> {
         self.r1_table.get(seq)
     }
-    pub fn r2_contains(&self, seq: &str) -> Option<&usize> {
+    pub fn r2_contains(&self, seq: &str) -> Option<&HashSet<usize>> {
         self.r2_table.get(seq)
     }
     pub fn len(&self) -> usize {

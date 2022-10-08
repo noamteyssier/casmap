@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{construct_table::ConstructTable, kmer::KmerIter};
 
 #[derive(Debug)]
@@ -14,32 +16,35 @@ impl<'a> ConstructResults<'a> {
         self.cid
     }
     pub fn match_into(&mut self, table: &ConstructTable) {
-        self.cid = match self.kmer_search_r1(table, self.r1) {
-            Some(cid_r1) => match self.kmer_search_r2(table, self.r2) {
-                Some(cid_r2) => {
-                    if cid_r1 == cid_r2 {
-                        Some(cid_r1)
-                    } else {
-                        None
-                    }
+        let cid_set_r1 = self.kmer_search_r1(table, self.r1);
+        let cid_set_r2 = self.kmer_search_r2(table, self.r2);
+
+        self.cid = if cid_set_r1.is_none() || cid_set_r2.is_none() {
+            None
+        } else {
+            let mut ix = cid_set_r1.unwrap().intersection(cid_set_r2.unwrap());
+            if let Some(cid) = ix.next() {
+                if let Some(_) = ix.next() {
+                    panic!("Ambiguous R1/R2 Intersection discovered");
                 }
-                None => None,
-            },
-            None => None,
+                Some(*cid)
+            } else {
+                None
+            }
         };
     }
-    fn kmer_search_r1(&self, table: &ConstructTable, sequence: &str) -> Option<usize> {
+    fn kmer_search_r1(&self, table: &'a ConstructTable, sequence: &str) -> Option<&HashSet<usize>> {
         for kmer in KmerIter::new(sequence, table.k()) {
-            if let Some(cid) = table.r1_contains(kmer) {
-                return Some(*cid);
+            if let Some(cid_set) = table.r1_contains(kmer) {
+                return Some(cid_set);
             }
         }
         None
     }
-    fn kmer_search_r2(&self, table: &ConstructTable, sequence: &str) -> Option<usize> {
+    fn kmer_search_r2(&self, table: &'a ConstructTable, sequence: &str) -> Option<&HashSet<usize>> {
         for kmer in KmerIter::new(sequence, table.k()) {
-            if let Some(cid) = table.r2_contains(kmer) {
-                return Some(*cid);
+            if let Some(cid_set) = table.r2_contains(kmer) {
+                return Some(cid_set);
             }
         }
         None

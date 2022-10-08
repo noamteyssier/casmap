@@ -50,7 +50,8 @@ fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> 
         counts.count(&results);
     }
 
-    println!("{:#?}", counts);
+    counts.pprint();
+
     Ok(())
 }
 
