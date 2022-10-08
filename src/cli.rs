@@ -50,4 +50,21 @@ pub enum Commands {
         #[clap(short, long, default_value = "construct_counts.tsv")]
         output: String,
     },
+
+    /// Build the expected construct sequences
+    Build {
+
+        /// Spacer table
+        #[clap(short = 's', long)]
+        spacer_table: String,
+
+        /// Constant Repeats
+        #[clap(short = 'c', long)]
+        constant_table: String,
+
+        /// Output file to write to
+        #[clap(short, long, default_value = "constructs.fa")]
+        output: String,
+
+    }
 }

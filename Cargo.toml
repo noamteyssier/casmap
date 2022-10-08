@@ -1,6 +1,6 @@
 [package]
 name = "casmap"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A way to count and characterize constructs for cas12 6-plex CRISPR screens"
 repository = "https://github.com/noamteyssier/casmap"
