@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet, hash_map::Keys};
+use hashbrown::{HashMap, HashSet, hash_map::Keys};
 use crate::{constant::Constant, construct::Construct, spacer::Spacer};
 use anyhow::{bail, Result};
 

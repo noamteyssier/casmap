@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use hashbrown::HashSet;
 
 use crate::{construct_table::ConstructTable, kmer::KmerIter};
 
