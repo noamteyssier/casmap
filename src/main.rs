@@ -21,14 +21,14 @@ use spinoff::{Color, Spinner, Spinners, Streams};
 
 use crate::construct_results::ConstructResults;
 
-fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str, _output: &str) -> Result<()> {
+fn collect_spacers(r1: &str, r2: &str, spacer_table: &str, _output: &str) -> Result<()> {
     let sp = Spinner::new_with_stream(
         Spinners::Dots12,
         "Building Spacer Hashmap",
         Color::Green,
         Streams::Stderr,
     );
-    let table = SpacerTable::from_file(sgrna_table)?;
+    let table = SpacerTable::from_file(spacer_table)?;
     sp.stop_and_persist("✔️", "Finished Spacer Table");
 
     let sp = Spinner::new_with_stream(
@@ -55,8 +55,8 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str, _output: &str) -> Resu
 fn collect_constructs(
     r1: &str,
     r2: &str,
-    sgrna_table: &str,
-    dr_table: &str,
+    spacer_table: &str,
+    constant_table: &str,
     output: &str,
 ) -> Result<()> {
     let sp = Spinner::new_with_stream(
@@ -65,7 +65,7 @@ fn collect_constructs(
         Color::Green,
         Streams::Stderr,
     );
-    let table = ConstructTable::new(sgrna_table, dr_table)?;
+    let table = ConstructTable::new(spacer_table, constant_table)?;
     let mut counts = ConstructCounts::new(table.len());
     sp.stop_and_persist("✔️", "Finished Construct Table");
 
@@ -97,19 +97,19 @@ fn main() -> Result<()> {
         Commands::Spacers {
             r1,
             r2,
-            sgrna_table,
+            spacer_table,
             output,
         } => {
-            collect_spacers(&r1, &r2, &sgrna_table, &output)?;
+            collect_spacers(&r1, &r2, &spacer_table, &output)?;
         }
         Commands::Constructs {
             r1,
             r2,
-            sgrna_table,
-            dr_table,
+            spacer_table,
+            constant_table,
             output,
         } => {
-            collect_constructs(&r1, &r2, &sgrna_table, &dr_table, &output)?;
+            collect_constructs(&r1, &r2, &spacer_table, &constant_table, &output)?;
         }
     }
     Ok(())

@@ -19,10 +19,11 @@ pub enum Commands {
         #[clap(short = 'I', long)]
         r2: String,
 
-        /// sgRNA table
+        /// Spacer table
         #[clap(short = 's', long)]
-        sgrna_table: String,
+        spacer_table: String,
 
+        /// Output file to write to
         #[clap(short, long, default_value = "spacer_counts.tsv")]
         output: String,
     },
@@ -37,14 +38,15 @@ pub enum Commands {
         #[clap(short = 'I', long)]
         r2: String,
 
-        /// sgRNA table
+        /// Spacer table
         #[clap(short = 's', long)]
-        sgrna_table: String,
+        spacer_table: String,
 
-        /// Constant Repeats (DR)
-        #[clap(short = 'd', long)]
-        dr_table: String,
+        /// Constant Repeats
+        #[clap(short = 'c', long)]
+        constant_table: String,
 
+        /// Output file to write to
         #[clap(short, long, default_value = "construct_counts.tsv")]
         output: String,
     },
