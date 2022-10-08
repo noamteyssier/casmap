@@ -17,7 +17,7 @@ use construct_counts::ConstructCounts;
 use construct_table::ConstructTable;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
-use spinoff::{Spinner, Color, Spinners, Streams};
+use spinoff::{Color, Spinner, Spinners, Streams};
 
 use crate::construct_results::ConstructResults;
 
@@ -52,7 +52,13 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str, _output: &str) -> Resu
     Ok(())
 }
 
-fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str, output: &str) -> Result<()> {
+fn collect_constructs(
+    r1: &str,
+    r2: &str,
+    sgrna_table: &str,
+    dr_table: &str,
+    output: &str,
+) -> Result<()> {
     let sp = Spinner::new_with_stream(
         Spinners::Dots12,
         "Building Construct Hashmap",

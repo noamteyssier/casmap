@@ -1,7 +1,7 @@
-use std::{io::Write, fs::File};
+use crate::construct_results::ConstructResults;
 use anyhow::Result;
 use hashbrown::HashMap;
-use crate::construct_results::ConstructResults;
+use std::{fs::File, io::Write};
 
 #[derive(Debug)]
 pub struct ConstructCounts {
@@ -16,7 +16,12 @@ impl ConstructCounts {
             map.insert(x, 0);
             map
         });
-        Self { map, n_mapped: 0, n_unmapped: 0, total: 0 }
+        Self {
+            map,
+            n_mapped: 0,
+            n_unmapped: 0,
+            total: 0,
+        }
     }
     pub fn count(&mut self, results: &ConstructResults) {
         self.total += 1;
@@ -41,6 +46,9 @@ impl ConstructCounts {
     pub fn statistics(&self) {
         eprintln!("Mapped Reads    : {}", self.n_mapped);
         eprintln!("Total Reads     : {}", self.total);
-        eprintln!("Fraction Mapped : {:.4}", self.n_mapped as f64 / self.total as f64);
+        eprintln!(
+            "Fraction Mapped : {:.4}",
+            self.n_mapped as f64 / self.total as f64
+        );
     }
 }
