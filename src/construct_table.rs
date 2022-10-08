@@ -106,6 +106,9 @@ impl ConstructTable {
     pub fn r2_contains(&self, seq: &str) -> Option<&HashSet<usize>> {
         self.r2_table.get(seq)
     }
+    pub fn constructs(&self) -> &Vec<Construct> {
+        &self.constructs
+    }
     pub fn len(&self) -> usize {
         self.constructs.len()
     }

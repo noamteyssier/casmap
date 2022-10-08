@@ -20,6 +20,16 @@ impl Construct {
             bail!("Missing number of constructs found")
         }
     }
+    pub fn sequence(&self) -> String {
+        self.spacers.iter()
+            .zip(self.constants.iter())
+            .fold(
+                String::new(), |mut seq, (s, c)| {
+                    seq.push_str(c.sequence());
+                    seq.push_str(s.sequence());
+                    seq
+                })
+    }
     pub fn r1(&self) -> String {
         let s_iter = self.spacers.iter().take(3);
         let c_iter = self.constants.iter().take(3);

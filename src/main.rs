@@ -1,3 +1,5 @@
+use std::{fs::File, io::Write};
+
 use anyhow::Result;
 use clap::Parser;
 
@@ -91,6 +93,16 @@ fn collect_constructs(
     Ok(())
 }
 
+fn build_constructs(spacer_table: &str, constant_table: &str, output: &str) -> Result<()> {
+    let table = ConstructTable::new(spacer_table, constant_table)?;
+    let mut file = File::create(output)?;
+    for c in table.constructs() {
+        let rep = format!(">cid_{}\n{}\n", c.cid(), c.sequence());
+        write!(file, "{}", rep)?;
+    }
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
@@ -101,7 +113,7 @@ fn main() -> Result<()> {
             output,
         } => {
             collect_spacers(&r1, &r2, &spacer_table, &output)?;
-        }
+        },
         Commands::Constructs {
             r1,
             r2,
@@ -110,6 +122,9 @@ fn main() -> Result<()> {
             output,
         } => {
             collect_constructs(&r1, &r2, &spacer_table, &constant_table, &output)?;
+        },
+        Commands::Build { spacer_table, constant_table, output } => {
+            build_constructs(&spacer_table, &constant_table, &output)?;
         }
     }
     Ok(())
