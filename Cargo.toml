@@ -13,3 +13,4 @@ csv = "1.1.6"
 fxread = "0.2.5"
 regex = "1.6.0"
 serde = { version = "1.0.145", features = ["derive"] }
+spinners = "4.1.0"

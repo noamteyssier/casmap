@@ -17,6 +17,7 @@ use construct_counts::ConstructCounts;
 use construct_table::ConstructTable;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
+use spinners::Spinner;
 
 use crate::construct_results::ConstructResults;
 
@@ -37,8 +38,12 @@ fn collect_spacers(r1: &str, r2: &str, sgrna_table: &str) -> Result<()> {
 }
 
 fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> Result<()> {
+    let mut sp = Spinner::new(spinners::Spinners::Dots12, "Building Construct Hashmap".into());
     let table = ConstructTable::new(sgrna_table, dr_table)?;
     let mut counts = ConstructCounts::new(table.len());
+    sp.stop_with_newline();
+
+    let mut sp = Spinner::new(spinners::Spinners::Dots12, "Assigning reads".into());
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
 
@@ -49,7 +54,7 @@ fn collect_constructs(r1: &str, r2: &str, sgrna_table: &str, dr_table: &str) -> 
         results.match_into(&table);
         counts.count(&results);
     }
-
+    sp.stop_with_newline();
     counts.pprint();
 
     Ok(())
