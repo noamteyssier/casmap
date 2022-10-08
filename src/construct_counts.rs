@@ -36,6 +36,7 @@ impl ConstructCounts {
         }
     }
     pub fn pprint(&self, output: &str) -> Result<()> {
+        eprintln!("Writing Results to: {}", output);
         let mut f = File::create(output)?;
         writeln!(f, "{}\t{}", "ConstructID", "Counts")?;
         for (k, v) in self.map.iter() {
