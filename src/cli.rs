@@ -51,6 +51,25 @@ pub enum Commands {
         output: String,
     },
 
+    /// Counts the number of perfect constructs
+    Tuples {
+        /// Read 1
+        #[clap(short = 'i', long)]
+        r1: String,
+
+        /// Read 2
+        #[clap(short = 'I', long)]
+        r2: String,
+
+        /// Spacer table
+        #[clap(short = 's', long)]
+        spacer_table: String,
+
+        /// Output file to write to
+        #[clap(short, long, default_value = "tuple_counts.tsv")]
+        output: String,
+    },
+
     /// Build the expected construct sequences
     Build {
 
