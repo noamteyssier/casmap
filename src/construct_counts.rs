@@ -1,4 +1,4 @@
-use crate::construct_results::ConstructResults;
+use crate::{construct_results::ConstructResults, tuple_results::TupleResults};
 use anyhow::Result;
 use hashbrown::HashMap;
 use std::{fs::File, io::Write};
@@ -24,6 +24,18 @@ impl ConstructCounts {
         }
     }
     pub fn count(&mut self, results: &ConstructResults) {
+        self.total += 1;
+        match results.cid() {
+            Some(cid) => {
+                self.n_mapped += 1;
+                *self.map.get_mut(&cid).unwrap() += 1;
+            }
+            None => {
+                self.n_unmapped += 1;
+            }
+        }
+    }
+    pub fn count_tuple(&mut self, results: &TupleResults) {
         self.total += 1;
         match results.cid() {
             Some(cid) => {
