@@ -51,7 +51,7 @@ pub enum Commands {
         output: String,
     },
 
-    /// Counts the number of perfect constructs
+    /// Counts the number of 6-mer spacer tuples found
     Tuples {
         /// Read 1
         #[clap(short = 'i', long)]
