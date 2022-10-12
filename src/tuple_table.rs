@@ -33,6 +33,7 @@ impl TupleTable {
 
         let mut sequences = HashMap::with_capacity(records.len());
         let mut tuple_map = HashMap::with_capacity(records.len());
+        let mut dsq = Disambiseq::new();
         for chunks in records.chunks(6) {
             let cid = chunks[0].cid();
             let record_sequences = chunks
@@ -53,12 +54,17 @@ impl TupleTable {
 
             record_sequences
                 .iter()
-                .map(|x| (x, reverse_complement(x.borrow())))
-                .map(|(x, r)| (x.clone(), SeqWrapper(Rc::new(r.to_string()))))
-                .for_each(|(x, r)| {
-                    sequences.insert(x.clone(), x.clone());
-                    sequences.insert(r, x);
+                .for_each(|x| {
+                    dsq.insert_with_reverse_complement(x.borrow());
                 });
+
+
+            for (k, v) in dsq.unambiguous().into_iter() {
+                sequences.insert(k.clone(), v.clone());
+            }
+            for k in dsq.parents().into_iter() {
+                sequences.insert(k.clone(), k.clone());
+            }
         }
         let k = records[0].sequence().len();
         Ok(Self{sequences, tuple_map, k})
