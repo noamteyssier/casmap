@@ -1,4 +1,5 @@
-use crate::{tuple_table::{TupleTable, SeqWrapper, SeqTuple}, kmer::KmerIter};
+use crate::{tuple_table::{TupleTable, SeqTuple}, kmer::KmerIter};
+use disambiseq::SeqWrapper;
 
 #[derive(Debug)]
 pub struct TupleResults<'a> {
