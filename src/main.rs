@@ -102,11 +102,27 @@ fn collect_tuples(
     spacer_table: &str,
     output: &str,
 ) -> Result<()> {
+
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Building Construct Hashmap",
+        Color::Green,
+        Streams::Stderr,
+    );
     let table = TupleTable::from_file(spacer_table)?;
     let mut counts = ConstructCounts::new(table.len());
+    sp.stop_and_persist("✔️", "Finished Construct Table");
+
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
 
+
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Matching Reads",
+        Color::Green,
+        Streams::Stderr,
+    );
     for (r1_bytes, r2_bytes) in r1_reader.zip(r2_reader) {
         let r1 = std::str::from_utf8(r1_bytes.seq())?;
         let r2 = std::str::from_utf8(r2_bytes.seq())?;
@@ -114,6 +130,7 @@ fn collect_tuples(
         results.match_into(&table);
         counts.count_tuple(&results);
     }
+    sp.stop_and_persist("✔️", "Finished Mapping Reads");
     counts.pprint(output)?;
     counts.statistics();
     Ok(())
