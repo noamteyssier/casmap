@@ -19,8 +19,10 @@ impl<'a> TupleResults<'a> {
         let mut tuple_r2 = Self::kmer_search(table, self.r2, true);
         tuple.append(&mut tuple_r1);
         tuple.append(&mut tuple_r2);
-        let tuple = Self::build_tuple(&tuple);
-        self.cid = table.get_tuple(&tuple);
+        if tuple.len() == 6 {
+            let tuple = Self::build_tuple(&tuple);
+            self.cid = table.get_tuple(&tuple);
+       }
     }
     fn build_tuple(tuple: &[SeqWrapper]) -> SeqTuple {
         (
