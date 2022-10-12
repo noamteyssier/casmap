@@ -1,16 +1,10 @@
 use std::{rc::Rc, borrow::Borrow};
 use anyhow::Result;
+use disambiseq::{Disambiseq, SeqWrapper};
 use hashbrown::HashMap;
-use crate::{spacer::Spacer, utils::reverse_complement};
+use crate::spacer::Spacer;
 
-#[derive(Clone, Debug, Hash, Eq, PartialEq)]
-pub struct SeqWrapper (Rc<String>);
-impl Borrow<str> for SeqWrapper {
-    fn borrow(&self) -> &str {
-        (*self.0).borrow()
-    }
-}
-
+/// Convenience alias for SeqWrapper 6-Mer Tuples
 pub type SeqTuple = (
     SeqWrapper,
     SeqWrapper,
