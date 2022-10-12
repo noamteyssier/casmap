@@ -74,7 +74,7 @@ casgen
 
 ### Construct Counting
 
-This will map constructs with exact mathcing on both the spacers and constant regions.
+This will map constructs with exact matching on both the spacers and constant regions.
 
 ```bash
 casmap constructs \
@@ -94,4 +94,16 @@ casmap spacers \
   -i casgen_R1.fastq \
   -I casgen_R2.fastq \
   -s casgen_spacers.tsv
+```
+
+### Tuple Counting
+
+This will map constructs by matching spacer tuples and ignoring constant regions.
+It will also allow unambiguous one-off mismatches when mapping spacers.
+
+```bash
+casmap tuples \
+  -i casgen_R1.fastq \
+  -I casgen_R2.fastq \
+  -s casgen_spacers.tsv 
 ```
