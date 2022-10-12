@@ -115,6 +115,7 @@ fn collect_tuples(
         counts.count_tuple(&results);
     }
     counts.pprint(output)?;
+    counts.statistics();
     Ok(())
 }
 
