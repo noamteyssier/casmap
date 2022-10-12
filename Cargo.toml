@@ -1,6 +1,6 @@
 [package]
 name = "casmap"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A way to count and characterize constructs for cas12 6-plex CRISPR screens"
 repository = "https://github.com/noamteyssier/casmap"
@@ -12,6 +12,7 @@ categories = ["science"]
 anyhow = "1.0.65"
 clap = { version = "4.0.10", features = ["derive"] }
 csv = "1.1.6"
+disambiseq = "0.1.9"
 fxread = "0.2.5"
 hashbrown = "0.12.3"
 regex = "1.6.0"
