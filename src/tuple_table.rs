@@ -57,16 +57,14 @@ impl TupleTable {
                 .for_each(|x| {
                     dsq.insert_with_reverse_complement(x.borrow());
                 });
-
-
-            for (k, v) in dsq.unambiguous().into_iter() {
-                sequences.insert(k.clone(), v.clone());
-            }
-            for k in dsq.parents().into_iter() {
-                sequences.insert(k.clone(), k.clone());
-            }
         }
         let k = records[0].sequence().len();
+        for (k, v) in dsq.unambiguous().into_iter() {
+            sequences.insert(k.clone(), v.clone());
+        }
+        for k in dsq.parents().into_iter() {
+            sequences.insert(k.clone(), k.clone());
+        }
         Ok(Self{sequences, tuple_map, k})
     }
     pub fn k(&self) -> usize {
