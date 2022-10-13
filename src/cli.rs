@@ -107,7 +107,7 @@ pub enum Commands {
         constant_table: String,
 
         /// Output file to write to
-        #[clap(short, long, default_value = "tuple_counts.tsv")]
+        #[clap(short, long, default_value = "read_description.tsv")]
         output: String,
     },
 }
