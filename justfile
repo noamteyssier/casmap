@@ -2,6 +2,9 @@
 build:
   cargo build --release
 
+install:
+  cargo install --path .
+
 run-spacers: build
   target/release/casmap spacers \
     -i example_data/casgen_R1.fastq \
