@@ -157,8 +157,16 @@ fn describe_reads(
     constant_table: &str,
     output: &str,
 ) -> Result<()> {
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Building Construct Hashmap",
+        Color::Green,
+        Streams::Stderr,
+    );
     let spacer_table = TupleTable::from_file(spacer_table)?;
     let constant_table = ConstantTable::from_file(constant_table)?;
+    sp.stop_and_persist("✔️", "Finished Construct Table");
+
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
     let mut file = File::create(output)?;
@@ -166,6 +174,13 @@ fn describe_reads(
         "index", "dr1", "dr2", "dr3", "spacer1", "spacer2", "spacer3", "dr4", "dr5", "dr6", "spacer4", "spacer5", "spacer6",
     ];
     writeln!(file, "{}", fields.join("\t"))?;
+
+    let sp = Spinner::new_with_stream(
+        Spinners::Dots12,
+        "Matching Reads",
+        Color::Green,
+        Streams::Stderr,
+    );
     for (idx, (r1_bytes, r2_bytes)) in r1_reader.zip(r2_reader).enumerate() {
         let r1 = std::str::from_utf8(r1_bytes.seq())?;
         let r2 = std::str::from_utf8(r2_bytes.seq())?;
@@ -173,6 +188,7 @@ fn describe_reads(
         results.match_into(&spacer_table, &constant_table);
         writeln!(file, "{}", results.pprint(idx))?;
     }
+    sp.stop_and_persist("✔️", "Finished Mapping Reads");
 
     Ok(())
 }
