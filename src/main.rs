@@ -161,12 +161,17 @@ fn describe_reads(
     let constant_table = ConstantTable::from_file(constant_table)?;
     let r1_reader = fxread::initialize_reader(r1)?;
     let r2_reader = fxread::initialize_reader(r2)?;
+    let mut file = File::create(output)?;
+    let fields = vec![
+        "index", "dr1", "dr2", "dr3", "spacer1", "spacer2", "spacer3", "dr4", "dr5", "dr6", "spacer4", "spacer5", "spacer6",
+    ];
+    writeln!(file, "{}", fields.join("\t"))?;
     for (idx, (r1_bytes, r2_bytes)) in r1_reader.zip(r2_reader).enumerate() {
         let r1 = std::str::from_utf8(r1_bytes.seq())?;
         let r2 = std::str::from_utf8(r2_bytes.seq())?;
         let mut results = DescribeResult::new(r1, r2);
         results.match_into(&spacer_table, &constant_table);
-        println!("{}", results.pprint(idx));
+        writeln!(file, "{}", results.pprint(idx))?;
     }
 
     Ok(())
