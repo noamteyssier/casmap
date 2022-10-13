@@ -107,3 +107,17 @@ casmap tuples \
   -I casgen_R2.fastq \
   -s casgen_spacers.tsv 
 ```
+
+### Describe
+
+This will map the spacers and direct repeats foun for each one of the reads and report
+back a tab-separated value table for each read.
+
+```bash
+casmap describe \
+  -i casgen_R1.fastq \
+  -I casgen_R2.fastq \
+  -s casgen_spacers.tsv \
+  -c casgen_constants.tsv
+```
+
