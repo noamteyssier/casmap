@@ -5,10 +5,12 @@ use clap::Parser;
 
 mod cli;
 mod constant;
+mod constant_table;
 mod construct;
 mod construct_counts;
 mod construct_results;
 mod construct_table;
+mod describe_result;
 mod kmer;
 mod sequence;
 mod spacer;
@@ -17,8 +19,10 @@ mod tuple_table;
 mod tuple_results;
 mod utils;
 use cli::{Cli, Commands};
+use constant_table::ConstantTable;
 use construct_counts::ConstructCounts;
 use construct_table::ConstructTable;
+use describe_result::DescribeResult;
 use sequence::SequenceResults;
 use spacer_table::SpacerTable;
 use spinoff::{Color, Spinner, Spinners, Streams};
@@ -146,6 +150,28 @@ fn build_constructs(spacer_table: &str, constant_table: &str, output: &str) -> R
     Ok(())
 }
 
+fn describe_reads(
+    r1: &str,
+    r2: &str,
+    spacer_table: &str,
+    constant_table: &str,
+    output: &str,
+) -> Result<()> {
+    let spacer_table = TupleTable::from_file(spacer_table)?;
+    let constant_table = ConstantTable::from_file(constant_table)?;
+    let r1_reader = fxread::initialize_reader(r1)?;
+    let r2_reader = fxread::initialize_reader(r2)?;
+    for (idx, (r1_bytes, r2_bytes)) in r1_reader.zip(r2_reader).enumerate() {
+        let r1 = std::str::from_utf8(r1_bytes.seq())?;
+        let r2 = std::str::from_utf8(r2_bytes.seq())?;
+        let mut results = DescribeResult::new(r1, r2);
+        results.match_into(&spacer_table, &constant_table);
+        println!("{}", results.pprint(idx));
+    }
+
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
@@ -171,6 +197,9 @@ fn main() -> Result<()> {
         },
         Commands::Tuples { r1, r2, spacer_table, output } => {
             collect_tuples(&r1, &r2, &spacer_table, &output)?;
+        },
+        Commands::Describe { r1, r2, spacer_table, constant_table, output } => {
+            describe_reads(&r1, &r2, &spacer_table, &constant_table, &output)?;
         }
     }
     Ok(())

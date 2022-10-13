@@ -85,5 +85,29 @@ pub enum Commands {
         #[clap(short, long, default_value = "constructs.fa")]
         output: String,
 
-    }
+    },
+
+    /// Writes out the Direct Repeats and Spacers found for
+    /// each of the read pairs
+    Describe {
+        /// Read 1
+        #[clap(short = 'i', long)]
+        r1: String,
+
+        /// Read 2
+        #[clap(short = 'I', long)]
+        r2: String,
+
+        /// Spacer table
+        #[clap(short = 's', long)]
+        spacer_table: String,
+
+        /// Constant Repeats
+        #[clap(short = 'c', long)]
+        constant_table: String,
+
+        /// Output file to write to
+        #[clap(short, long, default_value = "tuple_counts.tsv")]
+        output: String,
+    },
 }
