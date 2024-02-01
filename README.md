@@ -1,3 +1,5 @@
+[![DOI:10.1101/2023.09.18.558350](http://img.shields.io/badge/DOI-10.1101/2023.09.18.558350-B31B1B.svg)](https://doi.org/10.1101/2023.09.18.558350)
+
 # casmap
 
 Mapping sgRNA counts for cas12 6-plex CRISPR screens
